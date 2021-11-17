@@ -4,6 +4,7 @@
 ### backend
 ```
 cd backend
+sudo docker-compose run citizen python manage.py migrate
 docker-compose up
 ```
 

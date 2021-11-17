@@ -7,17 +7,18 @@ services:
     ports:
       - 8000:8000
     depends_on:
-      - db
+      - citizen_db
       - redis
 
-  db:
+  citizen_db:
     image: postgres
     volumes:
-      - ./data/db:/var/lib/postgresql/data
+      - ./data/db:/var/lib/postgresql/data/citizen
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+      - PGDATA=/var/lib/postgresql/data/citizen
   redis:
     image: "redis"
     ports:
@@ -28,7 +29,7 @@ services:
     volumes:
       - .:/app
     depends_on:
-      - db
+      - citizen_db
       - redis
   celery-beat:
     build: .
@@ -36,6 +37,6 @@ services:
     volumes:
       - .:/app
     depends_on:
-      - db
+      - citizen_db
       - redis
      
