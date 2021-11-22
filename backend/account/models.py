@@ -14,16 +14,30 @@ class User(AbstractUser):
         error_messages={
             'unique': _("A account with that username already exists."),
         },
+        db_index=True
     )
     REQUIRED_FIELDS = []
     # hierarchy
     level = models.CharField(max_length=30, choices=CadreLevels.CHOICES, default=CadreLevels.CENTRAL)
-    supervisor = models.ForeignKey('self', null=True, related_name= 'subordinates',on_delete=models.CASCADE)
+    supervisor = models.ForeignKey('self', null=True, blank=True, related_name= 'subordinates',on_delete=models.CASCADE)
     
     # permission control
     declared_permission = models.BooleanField(default=True)
-    operate_from = models.DateTimeField(auto_now_add=True)
+    operate_from = models.DateTimeField(auto_now_add=True, null=True)
     operate_to = models.DateTimeField(null=True)
+
+    def get_citizens(self):
+        return []
+
+    def has_declared_permission(self):
+        if not self.declared_permission:
+            return False
+        if self.level == CadreLevels.CITY:
+            return self.declared_permission
+        return self.supervisor.has_declared_permission()
+
+
+
 
 
 

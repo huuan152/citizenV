@@ -6,6 +6,13 @@ from rest_framework.authentication import BaseAuthentication
 from rest_framework import exceptions
 from .models import User
 
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
 
 class JWTAuthentication(BaseAuthentication):
     def authenticate(self, request):
@@ -23,7 +30,7 @@ class JWTAuthentication(BaseAuthentication):
         except Exception:
             return None
             # raise exceptions.AuthenticationFailed('expired token')
-        # print(payload)
+        
         user = User.objects.get(pk=payload['user_id'])
         
         if user is None:
@@ -33,10 +40,11 @@ class JWTAuthentication(BaseAuthentication):
         
 
     @staticmethod
-    def generate_jwt(id):
+    def generate_jwt(id, request):
         payload = {            
             'user_id': id,
             'exp': datetime.datetime.utcnow() + datetime.timedelta(days=7),
             'iat': datetime.datetime.utcnow()
         }
+        
         return jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
