@@ -6,10 +6,10 @@ class CadreLevels:
     VILLAGE = "4"
 
     CHOICES = [
-        (CENTRAL, 'Central'),
-        (CITY, 'City'), 
-        (DISTRICT, 'District'), 
-        (COMMUNE, 'Commune'), 
-        (VILLAGE, 'Village'),      
+        (CENTRAL, 'Central'),#A1
+        (CITY, 'City'), #A2
+        (DISTRICT, 'District'),#A3 
+        (COMMUNE, 'Commune'), #B1
+        (VILLAGE, 'Village'), #B2   
     ]
     

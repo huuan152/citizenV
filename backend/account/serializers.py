@@ -6,13 +6,32 @@ from pytz import timezone
 class UserLoginForm(serializers.Serializer):
     username = serializers.CharField(max_length=50)
     password = serializers.CharField(max_length=150)
+
+class UserCreateForm(serializers.ModelSerializer):
+    password_confirm = serializers.CharField(max_length=150)
+    class Meta:
+        model = User
+        fields = ['username', 'password', 'password_confirm']
+    
+    def validate(self, data):
+        data = super().validate(data)
+
+        if len(data.get('password', '')) < 8:
+            raise serializers.ValidationError({'password': 'password must be at least 8 characters.'})
+        if data.get('password', '') != data.get('password_confirm', ''):
+            raise serializers.ValidationError({'password_confirm': 'password confirm is not exactly.'})
+        
+        return data
+
+        
+
     
 
 class UserSerializer(serializers.ModelSerializer):
     
     class Meta: 
         model = User
-        fields = ['username', 'level', 'is_active', 'declared_permission', 'is_staff']
+        fields = ['id', 'username', 'level', 'is_active', 'declared_permission', 'is_staff']
 
 class ScheduleForm(serializers.Serializer):
     operate_from = serializers.DateTimeField(format='%Y-%m-%dT%H:%M:%S:%f')
