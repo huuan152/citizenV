@@ -29,6 +29,10 @@ class User(AbstractUser):
     def get_citizens(self):
         return []
 
+    @property
+    def agency(self):
+        return User.objects.get(id=self.username)
+
     def has_declared_permission(self):
         if not self.declared_permission:
             return False

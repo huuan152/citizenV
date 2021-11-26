@@ -5,9 +5,11 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.decorators import action
+import re
 
 from .authentication import JWTAuthentication
-from .serializers import UserLoginForm, UserSerializer, ScheduleForm
+from .serializers import UserCreateForm, UserLoginForm, UserSerializer, ScheduleForm
 from .models import User
 from datetime import datetime, timezone
 from .tasks import deactive_declared_permission, active_declared_permission
@@ -45,9 +47,67 @@ class UserViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
     queryset = User.objects.all()
     
+    def create(self, request):
+        data = request.data
+        user = request.user
+        username = data.get('username', 'none')
+        super = user.username
+        if super == '00': #center
+            super = ''
+            
+        regex = f'^{super}[0-9][0-9]$'
+        if  len(username) != len(super) + 2 or username[-1] == '0' or not re.match(regex, username):
+            return Response({
+                'username': 'username must be numeric, start with your id and its length must be two characters longer than yours'
+                }, status= status.HTTP_400_BAD_REQUEST)
+        
+        s = UserCreateForm(data=data)
+        if s.is_valid():
+            dt = s.data
+            new_user =  User.objects.create(
+                            username= dt['username'],
+                            level=str(int(user.level) + 1), 
+                            supervisor=user
+                        )
+            new_user.set_password(dt['password'])
+            new_user.save()
+            
+            return Response(UserSerializer(new_user).data , status= status.HTTP_201_CREATED)
+        else:
+            return Response(s.errors, status= status.HTTP_400_BAD_REQUEST)
+
+    def update(self, request, pk):
+        user = self.get_queryset().get(id=pk)
+        if(not user):
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        data = request.data
+        #not allow change level
+        data.pop('level', None)
+        # validate id
+        username = data.get('username', None)
+        if username is not None:
+            super = pk[:-2]
+            regex = f'^{super}[0-9][0-9]$'
+            if  len(username) != len(pk) or username[-1] == '0' or not re.match(regex, username):
+                return Response({
+                            'username': 'username must be numeric, start with your id and its length must be two characters longer than yours'
+                    }, status= status.HTTP_400_BAD_REQUEST)
+        # else: data.pop('id', None)# prevent send null
+        s = UserSerializer(instance = user, data=data, partial=True)
+        if s.is_valid():
+            s.save()
+            return Response(s.data)
+        else:
+            return Response(s.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(methods=['GET'], detail=False)
+    def my(self, request):
+        return Response(UserSerializer(request.user).data)
+    
     def get_queryset(self):
         return self.request.user.subordinates.all()
-    
+
+
     def get_permissions(self):
         if self.action == 'list':
             permission_classes = [IsAuthenticated]

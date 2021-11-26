@@ -12,7 +12,6 @@ def active_declared_permission(username):
     user.save()
     print("Call Active", datetime.now())
 
-
 @app.task()
 def deactive_declared_permission(username):
 
