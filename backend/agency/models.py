@@ -1,5 +1,5 @@
 from django.db import models
-from account.models import User
+# from account.models import User
 from account import CadreLevels
 
 
@@ -13,10 +13,9 @@ class Agency(models.Model):
     level = models.CharField(max_length=30, choices=CadreLevels.CHOICES, default=CadreLevels.CITY)
     completed_declare = models.BooleanField(default=False)
 
-
-    @property
-    def staff(self):
-        return User.objects.get(username=self.id)
+    # @property
+    # def staff(self):
+    #     return None#User.objects.get(username=self.id)
     
     def __str__(self):
         return f'{self.id} {self.name}'

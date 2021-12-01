@@ -88,6 +88,7 @@ class AgencyViewSet(ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         user_agency = Agency.objects.get(id=user.username)
-        return user_agency.sub_agencies.all()
-
-    
+        rs = user_agency.sub_agencies.all()
+        if not rs:
+            return []
+        return rs

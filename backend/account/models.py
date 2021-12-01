@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
 
 from account import CadreLevels
+from agency.models import Agency
 
 # Create your models here.
 class User(AbstractUser):
@@ -20,18 +21,19 @@ class User(AbstractUser):
     # hierarchy
     level = models.CharField(max_length=30, choices=CadreLevels.CHOICES, default=CadreLevels.CENTRAL)
     supervisor = models.ForeignKey('self', null=True, blank=True, related_name= 'subordinates',on_delete=models.CASCADE)
-    
     # permission control
     declared_permission = models.BooleanField(default=True)
     operate_from = models.DateTimeField(auto_now_add=True, null=True)
     operate_to = models.DateTimeField(null=True)
 
+    agency = models.OneToOneField(Agency, on_delete=models.SET_NULL, related_name='staff', null=True, default= None)
+
     def get_citizens(self):
         return []
 
-    @property
-    def agency(self):
-        return User.objects.get(id=self.username)
+    # @property
+    # def agency(self):
+    #     return User.objects.get(id=self.username)
 
     def has_declared_permission(self):
         if not self.declared_permission:
