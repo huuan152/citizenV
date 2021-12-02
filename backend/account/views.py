@@ -8,6 +8,8 @@ from rest_framework import status
 from rest_framework.decorators import action
 import re
 
+from agency.models import Agency
+
 from .authentication import JWTAuthentication
 from .serializers import UserCreateForm, UserLoginForm, UserSerializer, ScheduleForm
 from .models import User
@@ -60,7 +62,11 @@ class UserViewSet(ModelViewSet):
             return Response({
                 'username': 'username must be numeric, start with your id and its length must be two characters longer than yours'
                 }, status= status.HTTP_400_BAD_REQUEST)
-        
+        agency = Agency.objects.get(id=username)
+        if (not agency):
+            return Response({
+                'username': 'the agency of this user has not created yet.'
+                }, status= status.HTTP_400_BAD_REQUEST)
         s = UserCreateForm(data=data)
         if s.is_valid():
             dt = s.data

@@ -26,14 +26,12 @@ class User(AbstractUser):
     operate_from = models.DateTimeField(auto_now_add=True, null=True)
     operate_to = models.DateTimeField(null=True)
 
-    agency = models.OneToOneField(Agency, on_delete=models.SET_NULL, related_name='staff', null=True, default= None)
+    agency = models.OneToOneField(Agency, on_delete=models.CASCADE, related_name='staff', null=True, default= None)
 
     def get_citizens(self):
         return []
 
-    # @property
-    # def agency(self):
-    #     return User.objects.get(id=self.username)
+    
 
     def has_declared_permission(self):
         if not self.declared_permission:
