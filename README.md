@@ -17,5 +17,6 @@ git commit -m "note"
 git push -u origin [tên nhánh]
 ```
 Mỗi người tạo một nhánh.
+Api document[CitizenV](https://docs.google.com/spreadsheets/d/1rMFGhINE9BXxJdf9qZyK6IkOabs0TT4NJ_fNthjqjZ0/edit?usp=sharing).
 
 **A+**
