@@ -18,7 +18,11 @@ class StaffSerializer(serializers.ModelSerializer):
             'level': {'required': True, 'write_only': True},
             'password': {'required': True, 'write_only': True}  
         }
-        
+class ReadOnlyAgencySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Agency
+        fields = ('id', 'name')
+                
 class AgencySerializer(serializers.ModelSerializer):
     staff = StaffSerializer()
     class Meta:

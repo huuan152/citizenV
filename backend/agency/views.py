@@ -5,10 +5,11 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from .serializers import AgencySerializer
+from .serializers import AgencySerializer, ReadOnlyAgencySerializer
 from .models import Agency
 from account.models import User
 
+from account import CadreLevels
 
 import re
 
@@ -80,6 +81,22 @@ class AgencyViewSet(ModelViewSet):
             return Response(data)
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+    
+    @action(methods=['GET'], detail=False)
+    def subtree(self, request):
+        data = []
+        level = int(request.user.level) + 1
+        village_level = int(CadreLevels.VILLAGE)
+        username = request.user.username
+        # query = Agency.objects.filter(id__startswith = username)
+        # print(query)
+        while level < village_level:
+            agencies = Agency.objects.filter(level=str(level), id__startswith = username)
+            print(agencies)
+            data.append(ReadOnlyAgencySerializer(agencies, many=True).data)
+            level += 1
+
+        return Response(data, status=status.HTTP_200_OK)
     
     def get_queryset(self):
         
