@@ -92,7 +92,7 @@ class AgencyViewSet(ModelViewSet):
         # print(query)
         while level < village_level:
             agencies = Agency.objects.filter(level=str(level), id__startswith = username)
-            print(agencies)
+            # print(agencies)
             data.append(ReadOnlyAgencySerializer(agencies, many=True).data)
             level += 1
 

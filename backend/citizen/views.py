@@ -3,10 +3,14 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
-
+from rest_framework.decorators import action
 from citizen.models import Citizen
 from .serializers import CitizenSerializer
 from account.permissions import DelarationPermission
+
+import csv
+import codecs
+
 # Create your views here.
 
 class CitizenViewSet(ModelViewSet):
@@ -27,6 +31,8 @@ class CitizenViewSet(ModelViewSet):
             return Response(s.data, status= status.HTTP_200_OK)
         return Response(s.errors, status=status.HTTP_400_BAD_REQUEST)
     
+
+    
     def update(self, request, pk):
         citizen = self.get_queryset().get(pk=pk)
         if citizen:
@@ -44,6 +50,37 @@ class CitizenViewSet(ModelViewSet):
             return Response(s.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response(status = status.HTTP_404_NOT_FOUND)
 
+    @action(methods=['POST'], detail=False)
+    def upload_by_file_csv(self, request):
+        file = request.FILES['file']
+        reader = csv.DictReader(codecs.iterdecode(file, 'utf-8'))
+        s = CitizenSerializer(data=[row for row in reader], many=True)
+        if s.is_valid():
+            s.save(declarer=request.user)
+            return Response(s.data, status=status.HTTP_200_OK)
+        else:
+            return Response(s.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        # for row in reader:
+        #     t = row
+        #     t['declarer'] = user_id
+        #     s = CitizenSerializer(data=[row for row in reader], many=True)
+        #     if(s.is_valid()):
+        #         s.save(commit=False)
+        #         data.append(s.data)
+        #         serializes.append(s)
+        #     else:
+        #         data.append(s.errors)
+        #         success = False
+        
+        # if success:
+        #     for s in serializes:
+        #         s.save()
+        #     return Response(data, status=status.HTTP_200_OK)
+        # else:
+        #     return Response(data, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(reader, status=status.HTTP_200_OK)
     def get_queryset(self):
         username = self.request.user.username
         if(username == '00'):
@@ -51,7 +88,7 @@ class CitizenViewSet(ModelViewSet):
         return Citizen.objects.filter(declarer__username__startswith = username)
     
     def get_permissions(self):
-        if self.action == 'create' or self.action == 'update' or self.action == 'delete':
+        if self.action == 'create' or self.action == 'update' or self.action == 'delete' or self.action == 'upload_by_file_csv':
             permission_classes = [DelarationPermission]
         else:
             permission_classes = [IsAuthenticated]
