@@ -31,8 +31,21 @@ class UserSerializer(serializers.ModelSerializer):
     
     class Meta: 
         model = User
-        fields = ['id', 'username', 'level', 'is_active', 'declared_permission', 'supervisor']
+        fields = ['id', 'username', 'level', 'declared_permission', 'supervisor']
 
+class UserLoginSerializer(serializers.ModelSerializer):
+    operate_from = serializers.DateTimeField(format='%Y-%m-%dT%H:%M:%S:%f')
+    operate_to = serializers.DateTimeField(format='%Y-%m-%dT%H:%M:%S:%f')
+    agency = serializers.SerializerMethodField()
+    class Meta: 
+        model = User
+        fields = ['id', 'username', 'level', 'declared_permission','operate_from', 'operate_to', 'supervisor', 'agency']
+    def get_agency(self, instance):
+        agency = instance.agency
+        if agency:
+            return {'id': agency.id, 'name': agency.name, 'completed_declare': agency.completed_declare}
+
+        return None
 class ScheduleForm(serializers.Serializer):
     operate_from = serializers.DateTimeField(format='%Y-%m-%dT%H:%M:%S:%f')
     operate_to = serializers.DateTimeField(format='%Y-%m-%dT%H:%M:%S:%f')

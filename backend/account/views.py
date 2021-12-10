@@ -11,7 +11,7 @@ import re
 from agency.models import Agency
 
 from .authentication import JWTAuthentication
-from .serializers import UserCreateForm, UserLoginForm, UserSerializer, ScheduleForm
+from .serializers import UserCreateForm, UserLoginForm, UserSerializer, ScheduleForm, UserLoginSerializer
 from .models import User
 from datetime import datetime, timezone
 from .tasks import deactive_declared_permission, active_declared_permission
@@ -33,7 +33,7 @@ class UserLoginAPIView(APIView):
             
             token = JWTAuthentication.generate_jwt(user.id, request)
             response = Response()
-            user_data = UserSerializer(user).data
+            user_data = UserLoginSerializer(user).data
             # if user.avatar:
             #     user_data['avatar'] = request.build_absolute_uri(user_data['avatar'])
             response.data = {
