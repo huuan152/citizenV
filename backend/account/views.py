@@ -108,7 +108,8 @@ class UserViewSet(ModelViewSet):
 
     @action(methods=['GET'], detail=False)
     def my(self, request):
-        return Response(UserSerializer(request.user).data)
+        user_data = UserLoginSerializer(request.user).data
+        return Response(user_data)
     
     def get_queryset(self):
         return self.request.user.subordinates.all()
