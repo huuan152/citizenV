@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import action
 from citizen.models import Citizen
-from .serializers import CitizenSerializer
+from .serializers import CitizenSerializer, CitizenUpdateSerializer
 from account.permissions import DelarationPermission
 
 import csv
@@ -42,8 +42,11 @@ class CitizenViewSet(ModelViewSet):
             village_id = data.get('village_id', None)
             if not village_id or len(village_id) != 8 or not village_id.startswith(request.user.username):
                 return Response({'village_id': 'Invalid value'}, status=status.HTTP_400_BAD_REQUEST)
-            
-            s = CitizenSerializer(instance=citizen, data=data, partial=True)
+            id_number_update = data.get('id_number', '')
+            if id_number_update != '' and id_number_update != str(citizen.id_number):
+                if Citizen.objects.filter(id_number = id_number_update).exists():
+                    return Response({'id_number': 'citizen width this id_number has exist'}, status=status.HTTP_400_BAD_REQUEST)
+            s = CitizenUpdateSerializer(instance=citizen, data=data, partial=True)
             if s.is_valid():
                 s.save()
                 return Response(s.data, status= status.HTTP_200_OK)

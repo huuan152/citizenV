@@ -81,7 +81,18 @@ class UserViewSet(ModelViewSet):
             return Response(UserSerializer(new_user).data , status= status.HTTP_201_CREATED)
         else:
             return Response(s.errors, status= status.HTTP_400_BAD_REQUEST)
-
+    
+    @action(methods=['GET'], detail=True)
+    def toggle_declare_permission (self, request, pk):
+        user = self.get_queryset().get(id=pk)
+        if user:
+            update = not user.declared_permission
+            user.declared_permission = update
+            user.save()
+            return Response({'current': update})
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+    
     def update(self, request, pk):
         user = self.get_queryset().get(id=pk)
         if(not user):
@@ -89,15 +100,16 @@ class UserViewSet(ModelViewSet):
         data = request.data
         #not allow change level
         data.pop('level', None)
+        data.pop('username', None)
         # validate id
         username = data.get('username', None)
-        if username is not None:
-            super = pk[:-2]
-            regex = f'^{super}[0-9][0-9]$'
-            if  len(username) != len(pk) or username[-1] == '0' or not re.match(regex, username):
-                return Response({
-                            'username': 'username must be numeric, start with your id and its length must be two characters longer than yours'
-                    }, status= status.HTTP_400_BAD_REQUEST)
+        # if username is not None:
+        #     super = pk[:-2]
+        #     regex = f'^{super}[0-9][0-9]$'
+        #     if  len(username) != len(pk) or username[-1] == '0' or not re.match(regex, username):
+        #         return Response({
+        #                     'username': 'username must be numeric, start with your id and its length must be two characters longer than yours'
+        #             }, status= status.HTTP_400_BAD_REQUEST)
         # else: data.pop('id', None)# prevent send null
         s = UserSerializer(instance = user, data=data, partial=True)
         if s.is_valid():
@@ -110,6 +122,22 @@ class UserViewSet(ModelViewSet):
     def my(self, request):
         user_data = UserLoginSerializer(request.user).data
         return Response(user_data)
+
+    @action(methods=['POST'], detail=True)
+    def change_password(self, request, pk):
+        password = request.data.get('password', False)
+        if not password:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        user = User.objects.get(pk=pk)
+        if not user:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        if user.supervisor != request.user:
+            print("user not allowed")
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        user.set_password(password)
+        user.save()
+        return Response(status=status.HTTP_200_OK)
     
     def get_queryset(self):
         return self.request.user.subordinates.all()
@@ -119,7 +147,7 @@ class UserViewSet(ModelViewSet):
         if self.action == 'list':
             permission_classes = [IsAuthenticated]
         else:
-            permission_classes = []
+            permission_classes = [IsAuthenticated]
         return [permission() for permission in permission_classes]
 
 class CensusScheduleAPIView(APIView):
@@ -129,11 +157,11 @@ class CensusScheduleAPIView(APIView):
         s = ScheduleForm(data=request.data, context={'request': request})
         if s.is_valid():
             data = s.data
-            print("Data", data)
+            # print("Data", data)
 
             operate_from = datetime.strptime(data['operate_from'], '%Y-%m-%dT%H:%M:%S:%f').astimezone()
             operate_to = datetime.strptime(data['operate_to'], '%Y-%m-%dT%H:%M:%S:%f').astimezone()
-            print(operate_from)
+            # print(operate_from)
             user = request.user.subordinates.get(username=data['user'])
             if(user):
                 now = datetime.now().astimezone()

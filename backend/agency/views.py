@@ -30,7 +30,7 @@ class AgencyViewSet(ModelViewSet):
             super = ''
 
         regex = f'^{super}[0-9][0-9]$'
-        if  len(id) != len(super) + 2 or id[-1] == '0' or not re.match(regex, id):
+        if  len(id) != len(super) + 2 or id[-2: -1] == '00' or not re.match(regex, id):
             return Response({
                 'id': 'id must be numeric, start with your id and its length must be two characters longer than yours'
                 }, status= status.HTTP_400_BAD_REQUEST)
