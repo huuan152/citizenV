@@ -22,7 +22,7 @@ class CitizenSerializer(serializers.ModelSerializer):
         if id_number is not None and len(id_number) > 0:
             if Citizen.objects.filter(id_number = id_number).exists():
                 raise serializers.ValidationError({'id_number': {'citizen width this id_number has exist'}})
-        if len(id_number) != 9 or len(id_number) != 12:
+        if id_number is not None and len(id_number) != 0 and len(id_number) != 9 and len(id_number) != 12:
             raise serializers.ValidationError({'id_number': {'id_number': 'CCMND/CCCD phải 9/12 chữ số hoặc trống khi chưa đực cấp'}})
         return dt
 

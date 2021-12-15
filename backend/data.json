@@ -1,0 +1,30 @@
+{
+  "surname": [
+    { "content": "Nguyễn", "rate": 38.4, "ethnic": ["Kinh"] },
+    { "content": "Trần", "rate": 12.1, "ethnic": ["Kinh"] },
+    { "content": "Lê", "rate": 10.3, "ethnic": ["Kinh"] },
+    { "content": "Phạm", "rate": 6.7, "ethnic": ["Kinh"] },
+    { "content": "Hoàng", "rate": 5.1, "ethnic": ["Kinh", "Nùng", "Tày"] },
+    { "content": "Huỳnh", "rate": 5.1, "ethnic": ["Kinh"] },
+    { "content": "Phan", "rate": 4.5, "ethnic": ["Kinh"] },
+    { "content": "Vũ", "rate": 4, "ethnic": ["Kinh"] },
+    { "content": "Võ", "rate": 4, "ethnic": ["Kinh"] },
+    { "content": "Đặng", "rate": 2.1, "ethnic": ["Kinh"] },
+    { "content": "Bùi", "rate": 2, "ethnic": ["Kinh", "Tày"] },
+    { "content": "Đỗ", "rate": 1.4, "ethnic": ["Kinh"] },
+    { "content": "Hồ", "rate": 1.3, "ethnic": ["Kinh"] },
+    { "content": "Ngô", "rate": 1.3, "ethnic": ["Kinh"] },
+    { "content": "Dương", "rate": 1, "ethnic": ["Kinh", "Nùng", "Tày"] },
+    { "content": "lý", "rate": 0.5, "ethnic": ["Kinh", "Nùng"] },
+    { "content": "Vương", "rate": 0.009, "ethnic": ["Nùng"] },
+    { "content": "Nông", "rate": 0.003, "ethnic": ["Tày"] },
+    { "content": "Phí", "rate": 0.005, "ethnic": ["Tày"] },
+    { "content": "Hà", "rate": 0.005, "ethnic": ["Tày"] },
+    { "content": "La", "rate": 0.05, "ethnic": ["Kinh"] },
+    { "content": "Văn", "rate": 0.05, "ethnic": ["Kinh"] },
+    
+    { "content": "Lăng", "rate": 0.005, "ethnic": ["Kinh"] },
+    { "content": "Hứa", "rate": 0.03, "ethnic": ["Kinh"] },
+    { "content": "Tạ", "rate": 0.05, "ethnic": ["Kinh"] }
+  ]
+}
