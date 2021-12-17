@@ -68,6 +68,7 @@ class AgencyViewSet(ModelViewSet):
         if agency:
             update = not agency.completed_declare
             agency.completed_declare = update
+            agency.save()
             return Response({'current': update})
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
