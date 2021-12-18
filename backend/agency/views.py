@@ -89,6 +89,8 @@ class AgencyViewSet(ModelViewSet):
         level = int(request.user.level) + 1
         village_level = int(CadreLevels.VILLAGE)
         username = request.user.username
+        if username == '00':
+            username =''
         # query = Agency.objects.filter(id__startswith = username)
         # print(query)
         while level < village_level:
