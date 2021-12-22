@@ -15,7 +15,7 @@ class Education:
     SECONDARY = 'secondary'
     HIGH = 'high'
     UNIVERSITY = 'university'
-    MASTER = 'Master'
+    MASTER = 'master'
 
     CHOICES = [
         (NONE, 'None'),

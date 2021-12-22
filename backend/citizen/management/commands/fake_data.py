@@ -2,16 +2,18 @@ from django.core.management import BaseCommand
 from django.db import connections
 from django.db.utils import OperationalError
 import time
-
+import json
+import csv
 from account.models import User
-
+import codecs
 from faker import Faker
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        pass
-        # us = User.objects.all()
-        # for u in us:
-        #     u.set_password('123')
-        #     u.save()
-        # self.stdout.write('All of user have password is "123"')
+        with open('../update.csv') as f:
+            reader = csv.DictReader(codecs.iterdecode(f, 'utf-8'))
+            for line in reader:
+                self.stdout.write(line['name'])
+        
+            
+
