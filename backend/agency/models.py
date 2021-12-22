@@ -14,5 +14,7 @@ class Agency(models.Model):
     completed_declare = models.BooleanField(default=False)
     
     def __str__(self):
+        if self.level == '1':
+            return self.name
         sup_a = self.sup_agency.__str__() if self.sup_agency else ''
         return f'{self.name} {sup_a}' 

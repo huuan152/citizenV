@@ -40,7 +40,11 @@ class Command(BaseCommand):
                         if not User.objects.filter(username=agency['id']).exists():
                             supervisor_id = agency['id'][:2] if len(agency['id']) > 2 else '00'
                             supervisor  = User.objects.get(username=supervisor_id)
-                            User.objects.create(username=agency['id'], password='123', agency=ag, supervisor=supervisor, level=agency['level'])
+                            user = User.objects.create(username=agency['id'], password='123', agency=ag, supervisor=supervisor, level=agency['level'])
+                            user.set_password('123')
+                            user.save()
+                            
+
                     i += 1
                     if (i > 2500):
                         break

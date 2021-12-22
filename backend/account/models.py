@@ -27,10 +27,6 @@ class User(AbstractUser):
     operate_to = models.DateTimeField(null=True)
 
     agency = models.OneToOneField(Agency, on_delete=models.CASCADE, related_name='staff', null=True, default= None)
-
-    def get_citizens(self):
-        return []
-
     
 
     def has_declared_permission(self):

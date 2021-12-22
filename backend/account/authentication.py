@@ -43,7 +43,7 @@ class JWTAuthentication(BaseAuthentication):
     def generate_jwt(id, request):
         payload = {            
             'user_id': id,
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(days=7),
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(days=1),
             'iat': datetime.datetime.utcnow()
         }
         

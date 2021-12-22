@@ -25,15 +25,16 @@ class Command(BaseCommand):
             user_villages = User.objects.filter(level='4')
             # print(user_villages.count())
             k = 0
+            Citizen.objects.all().delete()
             for v in user_villages:
                 address = v.agency.__str__()
-                for i in range(50):
+                for i in range(20):
                     Citizen.objects.create(home_town=address, 
                         address_line1=address, 
                         address_line2=address, 
                         declarer=v, 
                         village_id =v.agency, 
-                        **data[k*50 + i])
+                        **data[k*20 + i])
                     # print(data[k*100 + i]['name'])
                 k += 1
 
