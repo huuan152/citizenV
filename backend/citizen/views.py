@@ -12,6 +12,25 @@ import csv
 import codecs
 
 # Create your views here.
+def check_unique_id_number(data):
+    s = set()
+    i = 0
+    errors = []
+    fail = False
+    for d in data:
+        e = {}
+        if len(d['id_number']) > 0:
+            if d['id_number'] in s:
+                e = {"id_number": ["Số cmnd phải là trống hoặc là duy nhất, dữ liệu bạn gửi có ít nhất 2 hồ sơ có số cmnd được điền nhưng giống nhau"]}
+                fail = True
+            else:
+                s.add(d['id_number'])
+        errors.append(e)
+    i += 1
+    if fail:
+        return (False, errors)
+    else:
+        return (True, None)
 
 class CitizenViewSet(ModelViewSet):
 
@@ -57,33 +76,35 @@ class CitizenViewSet(ModelViewSet):
     def upload_by_file_csv(self, request):
         file = request.FILES['file']
         reader = csv.DictReader(codecs.iterdecode(file, 'utf-8'))
-        s = CitizenSerializer(data=[row for row in reader], many=True)
+        rows = [row for row in reader]
+        # validate id_number unique or blank
+        id_number_validate = check_unique_id_number(rows)
+        if not id_number_validate[0]:
+            return Response(id_number_validate[1], status=status.HTTP_400_BAD_REQUEST)
+
+        s = CitizenSerializer(data=rows, many=True, context={'request': request})
+        if s.is_valid():
+            s.save(declarer=request.user)
+            return Response(s.data, status=status.HTTP_200_OK)
+        else:
+            return Response(s.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    @action(methods=['POST'], detail=False)
+    def batch_create(self, request):
+        rows = request.data
+
+        # validate id_number unique or blank
+        id_number_validate = check_unique_id_number(rows)
+        if not id_number_validate[0]:
+            return Response(id_number_validate[1], status=status.HTTP_400_BAD_REQUEST)
+        
+        s = CitizenSerializer(data=rows, many=True, context={'request': request})
         if s.is_valid():
             s.save(declarer=request.user)
             return Response(s.data, status=status.HTTP_200_OK)
         else:
             return Response(s.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        # for row in reader:
-        #     t = row
-        #     t['declarer'] = user_id
-        #     s = CitizenSerializer(data=[row for row in reader], many=True)
-        #     if(s.is_valid()):
-        #         s.save(commit=False)
-        #         data.append(s.data)
-        #         serializes.append(s)
-        #     else:
-        #         data.append(s.errors)
-        #         success = False
-        
-        # if success:
-        #     for s in serializes:
-        #         s.save()
-        #     return Response(data, status=status.HTTP_200_OK)
-        # else:
-        #     return Response(data, status=status.HTTP_400_BAD_REQUEST)
-
-        return Response(reader, status=status.HTTP_200_OK)
     def get_queryset(self):
         username = self.request.user.username
         if(username == '00'):
@@ -101,6 +122,11 @@ class CitizenViewSet(ModelViewSet):
         context = super(CitizenViewSet, self).get_serializer_context()
         context.update({"request": self.request})
         return context
+
+
+
+
+
 
 
 # class FamilyViewzSet(ModelViewSet):

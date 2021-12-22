@@ -82,6 +82,7 @@ class UserViewSet(ModelViewSet):
         else:
             return Response(s.errors, status= status.HTTP_400_BAD_REQUEST)
     
+    
     @action(methods=['GET'], detail=True)
     def toggle_declare_permission (self, request, pk):
         user = self.get_queryset().get(id=pk)
