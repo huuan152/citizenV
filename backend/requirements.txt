@@ -10,3 +10,4 @@ Faker==8.1.2
 django-redis==4.12.1
 celery==4.4.2
 django-extra-fields==3.0.2
+django-dbbackup==3.3.0

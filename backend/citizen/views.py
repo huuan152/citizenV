@@ -65,7 +65,7 @@ class CitizenViewSet(ModelViewSet):
             if id_number_update != '' and id_number_update != str(citizen.id_number):
                 if Citizen.objects.filter(id_number = id_number_update).exists():
                     return Response({'id_number': 'citizen width this id_number has exist'}, status=status.HTTP_400_BAD_REQUEST)
-            s = CitizenUpdateSerializer(instance=citizen, data=data, partial=True)
+            s = CitizenUpdateSerializer(instance=citizen, data=data, partial=True, context={'request': request})
             if s.is_valid():
                 s.save()
                 return Response(s.data, status= status.HTTP_200_OK)

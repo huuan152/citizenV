@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'account',
     'agency',
     'citizen',
+    'dbbackup',
 
 
 ]
@@ -162,3 +163,6 @@ CELERY_RESULT_BACKEND = 'redis://redis:6379'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
+
+DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
+DBBACKUP_STORAGE_OPTIONS = {'location': '/var/backups/'}
