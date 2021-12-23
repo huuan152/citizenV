@@ -42,9 +42,6 @@ INSTALLED_APPS = [
     'account',
     'agency',
     'citizen',
-    'dbbackup',
-
-
 ]
 
 MIDDLEWARE = [
