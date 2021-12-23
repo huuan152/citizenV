@@ -30,7 +30,8 @@ class JWTAuthentication(BaseAuthentication):
         except Exception:
             return None
             # raise exceptions.AuthenticationFailed('expired token')
-        
+        if not User.objects.filter(pk=payload['user_id']).exists():
+            return None
         user = User.objects.get(pk=payload['user_id'])
         
         if user is None:

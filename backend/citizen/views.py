@@ -44,7 +44,7 @@ class CitizenViewSet(ModelViewSet):
         village_id = data.get('village_id', None)
         if not village_id or len(village_id) != 8 or not village_id.startswith(request.user.username):
             return Response({'village_id': 'Invalid value'}, status=status.HTTP_400_BAD_REQUEST)
-        s = CitizenSerializer(data=data, partial=True)
+        s = CitizenSerializer(data=data, partial=True, context={'request': request})
         if s.is_valid():
             s.save()
             return Response(s.data, status= status.HTTP_200_OK)
