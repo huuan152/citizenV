@@ -28,7 +28,7 @@ class Command(BaseCommand):
             Citizen.objects.all().delete()
             for v in user_villages:
                 address = v.agency.__str__()
-                for i in range(20):
+                for i in range(15):
                     Citizen.objects.create(home_town=address, 
                         address_line1=address, 
                         address_line2=address, 

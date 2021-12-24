@@ -20,11 +20,11 @@ class Command(BaseCommand):
             try:
                 for agency in data:
                     if Agency.objects.filter(id=agency['id']).exists():
-                        
-                        supervisor_id = agency['id'][:2] if len(agency['id']) > 2 else '00'
+                
+                        supervisor_id = agency['id'][:-2] if len(agency['id']) > 2 else '00'
                         supervisor  = User.objects.get(username=supervisor_id)
                         User.objects.filter(username=agency['id']).update(supervisor=supervisor, level=agency['level'])
-                        Agency.objects.filter(id=agency['id']).update(**agency)
+                        Agency.objects.filter(id=agency['id']).update(**agency, sup_agency_id=supervisor_id)
                     else:
                         sup_agency = None
                         if len(agency['id']) == 2:

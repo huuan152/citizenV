@@ -26,11 +26,12 @@ class CitizenSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({'id_number': {'id_number': 'CCMND/CCCD phải 9/12 chữ số hoặc trống khi chưa đực cấp'}})
         
         # validate village id
-        # request = self.context.get('request', None)
-        # village_id = data.get('village_id', 'none').id
-        # # print(village_id)
-        # if len(village_id) != 8 or not village_id.startswith(request.user.username) :
-        #     raise serializers.ValidationError({'village_id': 'Thôn này không thuộc thẩm quyền của bạn'})
+        request = self.context.get('request', None)
+        village_id = data.get('village_id', 'none').id
+        dt['declarer'] = dt['village_id'].staff
+        # print(village_id)
+        if len(village_id) != 8 or not village_id.startswith(request.user.username) :
+            raise serializers.ValidationError({'village_id': 'Thôn này không thuộc thẩm quyền của bạn'})
         
         return dt
 

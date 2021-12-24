@@ -7,7 +7,7 @@ from rest_framework.decorators import action
 from citizen.models import Citizen
 from .serializers import CitizenSerializer, CitizenUpdateSerializer
 from account.permissions import DelarationPermission
-
+from account.models import User
 import csv
 import codecs
 
@@ -40,7 +40,8 @@ class CitizenViewSet(ModelViewSet):
     
     def create(self, request):
         data = request.data
-        data['declarer'] = request.user.id
+        data.pop('declarer', '')
+        # data['declarer'] = data.get('village_id', '')#request.user.id
         village_id = data.get('village_id', None)
         if not village_id or len(village_id) != 8 or not village_id.startswith(request.user.username):
             return Response({'village_id': 'Invalid value'}, status=status.HTTP_400_BAD_REQUEST)
@@ -84,7 +85,7 @@ class CitizenViewSet(ModelViewSet):
 
         s = CitizenSerializer(data=rows, many=True, context={'request': request})
         if s.is_valid():
-            s.save(declarer=request.user)
+            s.save()
             return Response(s.data, status=status.HTTP_200_OK)
         else:
             return Response(s.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -100,7 +101,7 @@ class CitizenViewSet(ModelViewSet):
         
         s = CitizenSerializer(data=rows, many=True, context={'request': request})
         if s.is_valid():
-            s.save(declarer=request.user)
+            s.save()
             return Response(s.data, status=status.HTTP_200_OK)
         else:
             return Response(s.errors, status=status.HTTP_400_BAD_REQUEST)
