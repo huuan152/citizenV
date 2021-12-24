@@ -122,6 +122,7 @@ class UserViewSet(ModelViewSet):
     @action(methods=['GET'], detail=False)
     def my(self, request):
         user_data = UserLoginSerializer(request.user).data
+        
         return Response(user_data)
 
     @action(methods=['POST'], detail=True)

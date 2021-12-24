@@ -43,7 +43,7 @@ class UserLoginSerializer(serializers.ModelSerializer):
     def get_agency(self, instance):
         agency = instance.agency
         if agency:
-            return {'id': agency.id, 'name': agency.name, 'completed_declare': agency.completed_declare}
+            return {'id': agency.id, 'name': agency.name, 'completed_declare': agency.completed_declare, 'stringName': instance.agency.__str__()}
 
         return None
 class ScheduleForm(serializers.Serializer):
