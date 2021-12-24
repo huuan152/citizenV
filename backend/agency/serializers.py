@@ -25,6 +25,8 @@ class ReadOnlyAgencySerializer(serializers.ModelSerializer):
                 
 class AgencySerializer(serializers.ModelSerializer):
     staff = StaffSerializer()
+    # stringName = serializers.SerializerMethodField()
+
     class Meta:
         model = Agency
         fields = ('id', 'name', 'staff', 'level', 'sup_agency', 'completed_declare')
@@ -33,6 +35,9 @@ class AgencySerializer(serializers.ModelSerializer):
             'sup_agency': {'required': True, 'write_only': True},
             'completed_declare':{'read_only': True}
         }
+    # def get_stringName(self, instance):
+    #     return instance.__str__()
+
     def create(self, validated_data):
         staff_data = validated_data.pop('staff', None)
         ins = Agency.objects.create(** validated_data)

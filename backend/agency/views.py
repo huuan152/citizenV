@@ -79,6 +79,7 @@ class AgencyViewSet(ModelViewSet):
         if agency:
             data = AgencySerializer(agency).data
             data.pop('staff', None)
+            data['stringName'] = agency.__str__()
             return Response(data)
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
