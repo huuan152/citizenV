@@ -53,7 +53,7 @@ class UserLoginSerializer(serializers.ModelSerializer):
         if instance.level == CadreLevels.CENTRAL:
             return True
         username = instance.username
-        l = len(username)
+        l = len(username) + 1
         user_tree = [username[:i] for i in range(2, l, 2)] # 010101 => ['01', '0101', '010101']
         if User.objects.filter(username__in = user_tree, declared_permission = False).exists():
             return False

@@ -64,11 +64,25 @@ class AgencyViewSet(ModelViewSet):
 
     @action(methods=['GET'], detail=False)
     def completed_declared_toggle (self, request):
+        
+        if (request.user.level != CadreLevels.COMMUNE):
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        username = request.user.username
         agency = request.user.agency
         if agency:
             update = not agency.completed_declare
             agency.completed_declare = update
             agency.save()
+            sup_agency = Agency.objects.get(id=username[:-2])
+            if update == True:
+                
+                if not sup_agency.sub_agencies.all().filter(completed_declare=False):
+                    sup_agency.completed_declare = True
+                    sup_agency.save()
+            else:
+                sup_agency.completed_declare = False
+                sup_agency.save()
+                
             return Response({'current': update})
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -94,7 +108,7 @@ class AgencyViewSet(ModelViewSet):
             username =''
         # query = Agency.objects.filter(id__startswith = username)
         # print(query)
-        while level < village_level:
+        while level <= village_level:
             agencies = Agency.objects.filter(level=str(level), id__startswith = username)
             # print(agencies)
             data.append(ReadOnlyAgencySerializer(agencies, many=True).data)

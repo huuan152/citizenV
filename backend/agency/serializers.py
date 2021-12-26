@@ -26,6 +26,7 @@ class ReadOnlyAgencySerializer(serializers.ModelSerializer):
 class AgencySerializer(serializers.ModelSerializer):
     staff = StaffSerializer()
     # stringName = serializers.SerializerMethodField()
+    completed_declare = serializers.SerializerMethodField()
 
     class Meta:
         model = Agency
@@ -35,6 +36,11 @@ class AgencySerializer(serializers.ModelSerializer):
             'sup_agency': {'required': True, 'write_only': True},
             'completed_declare':{'read_only': True}
         }
+    def get_completed_declare(self, instance):
+        if instance.level == '3':
+            return instance.completed_declare
+        return not instance.sub_agencies.all().filter(completed_declare=False).exists()
+
     # def get_stringName(self, instance):
     #     return instance.__str__()
 
